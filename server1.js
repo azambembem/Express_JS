@@ -25,5 +25,4 @@ app.use((err, req, res, next) => {
   console.error(err.message);
   res.status(500).send("Server Error");
 });
-
 app.listen(3000, () => console.log("Server running on port 3000"));
