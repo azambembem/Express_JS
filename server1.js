@@ -1,33 +1,29 @@
-// http://localhost:4000/users/1 yoki 0  orqali malumotlarni olishimiz mumkin.??
-const express = require("express"); // Express module chaqirish
+// opshi Middlewarelar
+const express = require("express");
+const app = express();
+const morgan = require("morgan");
 
-const PORT = 4000; // Express server uchun port 설정
+// 1. 내장 미들웨어
+app.use(express.json()); // JSON 본문 파싱
 
-const Users = [
-  { id: 1, name: "John Doe", email: "john.doe@example.com" },
-  { id: 2, name: "Jane Smith", email: "jane.smith@example.com" }
-];
+// 2. 서드파티 미들웨어
+app.use(morgan("dev")); // 요청 로깅
 
-const app = express(); // yangi Express app 생성
-
-app.get("/users", (req, res) => {
-  res.send(Users);
-});
-app.get("/", (req, res) => {
-  // "/" 이 경로로 요청이 오면 Hello from Express!를 결과값으로 전달
-  res.send("Hello from Express!");
+// 3. 애플리케이션 레벨 미들웨어
+app.use((req, res, next) => {
+  console.log("Custom middleware");
+  next(); // 다음 미들웨어로 넘어감
 });
 
-app.get("/users/:usersId", (req, res) => {
-  const userId = parseInt(req.params.usersId); // userni id sini oliyapti
-  const user = Users[userId];
-  if (user) {
-    res.json(user);
-  } else {
-    res.sendStatus(404);
-  }
+// 4. 라우터 레벨 미들웨어
+app.get("/test", (req, res, next) => {
+  res.send("Middleware Test");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`); // PORT 4000ni chaqrib ishlatish.
+// 5. 에러 처리 미들웨어
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(500).send("Server Error");
 });
+
+app.listen(3000, () => console.log("Server running on port 3000"));
